@@ -5,8 +5,6 @@ import { MENU_ITEMS } from './menuItems';
 const TRANSLATIONS = {
   'All': 'ទាំងអស់',
   'Food': 'ម្ហូប',
-  'Drinks': 'ភេសជ្ជៈ',
-  'soft drink & Dessert': 'ភេសជ្ជៈ និង បង្អែម',
   'Delivery to': 'ដឹកជញ្ជូនទៅកាន់',
   'Khmer Food': 'ម្ហូបខ្មែរ',
   'Search your favorite food...': 'ស្វែងរកម្ហូបដែលអ្នកចូលចិត្ត...',
@@ -63,7 +61,7 @@ export default function App() {
   const [table, setTable] = useState('Takeaway');
   const [paymentMethod, setPaymentMethod] = useState('ABA KHQR');
 
-  const categories = ['All', 'Food', 'Appetizers', 'One Plate', 'Stir Fried', 'Deep Fried', 'Soups', 'Curry', 'Salad & Steamed', 'Drinks', 'soft drink & Dessert', 'Desserts'];
+  const categories = ['All', 'Food', 'Appetizers', 'One Plate', 'Stir Fried', 'Deep Fried', 'Soups', 'Curry', 'Salad & Steamed', 'Desserts'];
   const filteredItems = selectedCategory === 'All' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === selectedCategory);
 
   // Translation Helper
