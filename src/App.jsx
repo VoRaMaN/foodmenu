@@ -1,64 +1,54 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Search, Heart, Home, ShoppingBag, User, ArrowLeft, Plus, Minus, Check, Moon, Sun, ChevronDown, QrCode, CreditCard, Banknote, Globe, Trash2 } from 'lucide-react';
-
-// Mock Data for "Khmer Food" Menu
-const MENU_ITEMS = [
-  { id: 1, name: 'Fish Amok', nameKh: 'áž¢áž¶áž˜áŸ‰áž»áž€ážáŸ’ážšáž¸', category: 'Food', price: 5.00, image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=400&q=80', description: 'Traditional Khmer steamed fish curry infused with lemongrass.', ingredients: ['Lemongrass', 'Coconut Milk', 'Fish', 'Chili', 'Kaffir Lime'] },
-  { id: 2, name: 'Beef Lok Lak', nameKh: 'áž¡áž»áž€áž¡áž¶áž€áŸ‹ážŸáž¶áž…áŸ‹áž‚áŸ„', category: 'Food', price: 3.00, image: 'https://images.unsplash.com/photo-1544025162-8a66ce7ef80f?auto=format&fit=crop&w=400&q=80', description: 'Stir-fried marinated beef served with a zesty lime pepper dip.', ingredients: ['Beef', 'Tomato', 'Lettuce', 'Kampot Pepper', 'Lime'] },
-  { id: 3, name: 'Nom Banh Chok', nameKh: 'áž“áŸ†áž”áž‰áŸ’áž…áž»áž€', category: 'Food', price: 2.50, image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=400&q=80', description: 'Classic Khmer rice noodles topped with a fragrant fish gravy.', ingredients: ['Rice Noodles', 'Fish Gravy', 'Cucumber', 'Mint', 'Banana Blossom'] },
-  { id: 4, name: 'Khmer Chicken Curry', nameKh: 'áž€áž¶ážšáž¸ážŸáž¶áž…áŸ‹áž˜áž¶áž“áŸ‹', category: 'Food', price: 3.50, image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=400&q=80', description: 'Rich, savory and mildly spiced red chicken curry.', ingredients: ['Chicken', 'Sweet Potato', 'Coconut Milk', 'Curry Paste'] },
-  { id: 5, name: 'Bai Sach Chrouk', nameKh: 'áž”áž¶áž™ážŸáž¶áž…áŸ‹áž‡áŸ’ážšáž¼áž€', category: 'Food', price: 1.50, image: 'https://images.unsplash.com/photo-1644400586962-d9dbcf0611e3?auto=format&fit=crop&w=400&q=80', description: 'Sweet pork marinated in coconut milk and garlic, slowly grilled and served over rice.', ingredients: ['Pork', 'Rice', 'Garlic', 'Coconut Milk', 'Pickled Cucumber'] },
-  { id: 6, name: 'Kuy Teav', nameKh: 'áž‚áž»áž™áž‘áž¶ážœ', category: 'Food', price: 2.00, image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=400&q=80', description: 'Comforting pork broth rice noodle soup topped with fresh herbs and bean sprouts.', ingredients: ['Rice Noodle', 'Pork Broth', 'Bean Sprouts', 'Green Onion', 'Fried Garlic'] },
-  { id: 7, name: 'Lort Cha', nameKh: 'áž›ážáž†áž¶', category: 'Food', price: 2.50, image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=400&q=80', description: 'Stir-fried short pin noodles with beef, broccoli, and topped with a fried egg.', ingredients: ['Pin Noodles', 'Beef', 'Broccoli', 'Soy Sauce', 'Egg'] },
-  { id: 8, name: 'Khmer Iced Coffee', nameKh: 'áž€áž¶áž áŸ’ážœáŸáž‘áž¹áž€ážŠáŸ„áŸ‡áž‚áŸ„áž‘áž¹áž€áž€áž€', category: 'Drinks', price: 1.50, image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=400&q=80', description: 'Strong roasted coffee blended with sweet condensed milk.', ingredients: ['Robusta Coffee', 'Condensed Milk', 'Ice'] },
-  { id: 9, name: 'Fresh Lime Tea', nameKh: 'ážáŸ‚áž€áŸ’ážšáž¼áž…áž†áŸ’áž˜áž¶', category: 'Drinks', price: 1.50, image: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?auto=format&fit=crop&w=400&q=80', description: 'Refreshing iced black tea with freshly squeezed lime.', ingredients: ['Black Tea', 'Fresh Lime', 'Sugar Syrup', 'Ice'] },
-  { id: 10, name: 'Fresh Coconut Water', nameKh: 'áž‘áž¹áž€ážŠáž¼áž„ážŸáŸ’ážšážŸáŸ‹', category: 'Drinks', price: 1.00, image: 'https://images.unsplash.com/photo-1550461716-e5c92c57e5b3?auto=format&fit=crop&w=400&q=80', description: 'Chilled, naturally sweet coconut water served straight from the shell.', ingredients: ['Fresh Coconut Water'] },
-  { id: 11, name: 'Passion Fruit Soda', nameKh: 'ážŸáž¼ážŠáž¶áž•áž¶ážŸáž·áž“', category: 'Drinks', price: 1.00, image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80', description: 'Fizzy and tangy soda mixed with fresh passion fruit pulp and mint.', ingredients: ['Passion Fruit', 'Soda Water', 'Mint', 'Simple Syrup'] },
-  { id: 12, name: 'Sugarcane Juice', nameKh: 'áž‘áž¹áž€áž¢áŸ†áž–áŸ…', category: 'Drinks', price: 0.50, image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80', description: 'Freshly pressed sugarcane juice with a hint of citrus.', ingredients: ['Sugarcane', 'Calamansi Lime', 'Ice'] },
-  { id: 13, name: 'Coconut Jelly', nameKh: 'áž…áž¶áž áž½áž™ážŠáž¼áž„', category: 'soft drink & Dessert', price: 1.00, image: 'https://images.unsplash.com/photo-1563805042-7684c8a9e9ce?auto=format&fit=crop&w=400&q=80', description: 'Cool and refreshing layered dessert served in a coconut shell.', ingredients: ['Coconut Water', 'Agar Agar', 'Sugar', 'Coconut Meat'] },
-  { id: 15, name: 'Mango Sticky Rice', nameKh: 'áž”áž¶áž™ážŠáŸ†ážŽáž¾áž”ážŸáŸ’ážœáž¶áž™áž‘áž»áŸ†', category: 'soft drink & Dessert', price: 1.50, image: 'https://images.unsplash.com/photo-1559564101-381156821d3f?auto=format&fit=crop&w=400&q=80', description: 'Sweet glutinous rice paired with ripe mango and drizzled with rich coconut cream.', ingredients: ['Sticky Rice', 'Mango', 'Coconut Cream', 'Sesame Seeds'] },
-  { id: 16, name: 'Chek Chien (Fried Banana)', nameKh: 'áž…áŸáž€áž…áŸ€áž“', category: 'soft drink & Dessert', price: 0.50, image: 'https://images.unsplash.com/photo-1582294437293-6a97855b38af?auto=format&fit=crop&w=400&q=80', description: 'Crispy deep-fried bananas coated in a sweet sesame batter.', ingredients: ['Banana', 'Rice Flour', 'Sesame Seeds', 'Sugar'] },
-];
+import { MENU_ITEMS } from './menuItems';
 
 const TRANSLATIONS = {
-  'All': 'áž‘áž¶áŸ†áž„áž¢ážŸáŸ‹',
-  'Food': 'áž˜áŸ’áž áž¼áž”',
-  'Drinks': 'áž—áŸážŸáž‡áŸ’áž‡áŸˆ',
-  'soft drink & Dessert': 'áž—áŸážŸáž‡áŸ’áž‡áŸˆ áž“áž·áž„ áž”áž„áŸ’áž¢áŸ‚áž˜',
-  'Delivery to': 'ážŠáž¹áž€áž‡áž‰áŸ’áž‡áž¼áž“áž‘áŸ…áž€áž¶áž“áŸ‹',
-  'Khmer Food': 'áž˜áŸ’áž áž¼áž”ážáŸ’áž˜áŸ‚ážš',
-  'Search your favorite food...': 'ážŸáŸ’ážœáŸ‚áž„ážšáž€áž˜áŸ’áž áž¼áž”ážŠáŸ‚áž›áž¢áŸ’áž“áž€áž…áž¼áž›áž…áž·ážáŸ’áž...',
-  'Khmer Specials': 'áž˜áž»ážáž˜áŸ’áž áž¼áž”áž–áž·ážŸáŸážŸ',
-  'Order Now': 'áž€áž»áž˜áŸ’áž˜áŸ‰áž„áŸ‹áž¥áž¡áž¼ážœáž“áŸáŸ‡',
-  'Featured': 'áž›áŸáž…áž’áŸ’áž›áŸ„',
-  'See All': 'áž˜áž¾áž›áž‘áž¶áŸ†áž„áž¢ážŸáŸ‹',
-  'All Menu': 'áž˜áŸ‰ážºáž“áž»áž™áž‘áž¶áŸ†áž„áž¢ážŸáŸ‹',
-  'Favorites': 'áž…áŸ†ážŽáž¼áž›áž…áž·ážáŸ’áž',
-  'No favorites added yet.': 'áž˜áž·áž“áž‘áž¶áž“áŸ‹áž˜áž¶áž“áž…áŸ†ážŽáž¼áž›áž…áž·ážáŸ’ážáž‘áŸáŸ”',
-  'Ingredients': 'áž‚áŸ’ážšáž¿áž„áž•áŸ’ážŸáŸ†',
-  'Add to Basket': 'áž”áž‰áŸ’áž…áž¼áž›áž‘áŸ…áž€áž“áŸ’ážáŸ’ážšáž€',
-  'Order Detail': 'áž–áŸážáŸŒáž˜áž¶áž“áž›áž˜áŸ’áž¢áž·ážáž€áž¶ážšáž€áž˜áŸ’áž˜áŸ‰áž„áŸ‹',
-  'Your basket is empty.': 'áž€áž“áŸ’ážáŸ’ážšáž€ážšáž”ážŸáŸ‹áž¢áŸ’áž“áž€áž‘áž‘áŸážšáŸ”',
-  'Qty': 'áž…áŸ†áž“áž½áž“',
-  'Dine-in / Takeaway': 'áž‰áŸ‰áž¶áŸ†áž“áŸ…áž áž¶áž„ / ážáŸ’áž…áž”áŸ‹',
-  'Takeaway': 'ážáŸ’áž…áž”áŸ‹',
-  'Table 1': 'ážáž»áž‘áž¸ áŸ¡',
-  'Table 2': 'ážáž»áž‘áž¸ áŸ¢',
-  'Table 3': 'ážáž»áž‘áž¸ áŸ£',
-  'Table 4': 'ážáž»áž‘áž¸ áŸ¤',
-  'Table 5': 'ážáž»áž‘áž¸ áŸ¥',
-  'Payment Method': 'ážœáž·áž’áž¸ážŸáž¶ážŸáŸ’ážáŸ’ážšáž‘áž¼áž‘áž¶ážáŸ‹',
-  'Cash': 'ážŸáž¶áž…áŸ‹áž”áŸ’ážšáž¶áž€áŸ‹',
-  'Card': 'áž€áž¶áž',
+  'All': 'ទាំងអស់',
+  'Food': 'ម្ហូប',
+  'Drinks': 'ភេសជ្ជៈ',
+  'soft drink & Dessert': 'ភេសជ្ជៈ និង បង្អែម',
+  'Delivery to': 'ដឹកជញ្ជូនទៅកាន់',
+  'Khmer Food': 'ម្ហូបខ្មែរ',
+  'Search your favorite food...': 'ស្វែងរកម្ហូបដែលអ្នកចូលចិត្ត...',
+  'Khmer Specials': 'មុខម្ហូបពិសេស',
+  'Order Now': 'កុម្ម៉ង់ឥឡូវនេះ',
+  'Featured': 'លេចធ្លោ',
+  'See All': 'មើលទាំងអស់',
+  'All Menu': 'ម៉ឺនុយទាំងអស់',
+  'Favorites': 'ចំណូលចិត្ត',
+  'No favorites added yet.': 'មិនទាន់មានចំណូលចិត្តទេ។',
+  'Ingredients': 'គ្រឿងផ្សំ',
+  'Add to Basket': 'បញ្ចូលទៅកន្ត្រក',
+  'Order Detail': 'ព័ត៌មានលម្អិតការកម្ម៉ង់',
+  'Your basket is empty.': 'កន្ត្រករបស់អ្នកទទេរ។',
+  'Qty': 'ចំនួន',
+  'Dine-in / Takeaway': 'ញ៉ាំនៅហាង / ខ្ចប់',
+  'Takeaway': 'ខ្ចប់',
+  'Table 1': 'តុទី ១',
+  'Table 2': 'តុទី ២',
+  'Table 3': 'តុទី ៣',
+  'Table 4': 'តុទី ៤',
+  'Table 5': 'តុទី ៥',
+  'Payment Method': 'វិធីសាស្ត្រទូទាត់',
+  'Cash': 'សាច់ប្រាក់',
+  'Card': 'កាត',
   'ABA KHQR': 'ABA KHQR',
-  'Scan to pay with ABA Mobile': 'ážŸáŸ’áž€áŸáž“ážŠáž¾áž˜áŸ’áž”áž¸áž‘áž¼áž‘áž¶ážáŸ‹áž‡áž¶áž˜áž½áž™ ABA Mobile',
-  'Processing': 'áž€áŸ†áž–áž»áž„ážŠáŸ†ážŽáž¾ážšáž€áž¶ážš',
-  'Total': 'ážŸážšáž»áž”',
-  'Shipping': 'ážŸáŸážœáž¶ážŠáž¹áž€áž‡áž‰áŸ’áž‡áž¼áž“',
-  'Grand Total': 'ážŸážšáž»áž”ážšáž½áž˜',
-  'Confirm Checkout': 'áž”áž‰áŸ’áž‡áž¶áž€áŸ‹áž€áž¶ážšáž‘áž¼áž‘áž¶ážáŸ‹',
-  'Home': 'áž‘áŸ†áž–áŸážšážŠáž¾áž˜',
-  'Orders': 'áž€áž¶ážšáž€áž˜áŸ’áž˜áŸ‰áž„áŸ‹'
+  'Scan to pay with ABA Mobile': 'ស្កេនដើម្បីទូទាត់ជាមួយ ABA Mobile',
+  'Processing': 'កំពុងដំណើរការ',
+  'Total': 'សរុប',
+  'Shipping': 'សេវាដឹកជញ្ជូន',
+  'Grand Total': 'សរុបរួម',
+  'Confirm Checkout': 'បញ្ជាក់ការទូទាត់',
+  'Home': 'ទំព័រដើម',
+  'Orders': 'ការកម្ម៉ង់',
+  'Appetizers': 'មុខម្ហូប',
+  'One Plate': 'ម្ហូបចានមួយ',
+  'Stir Fried': 'ម្ហូបឆា',
+  'Deep Fried': 'ម្ហូបបំពង',
+  'Soups': 'ស៊ុប',
+  'Curry': 'ការី',
+  'Salad & Steamed': 'សាឡាត និង ចំហុយ',
+  'Desserts': 'បង្អែម'
 };
 
 export default function App() {
@@ -73,7 +63,7 @@ export default function App() {
   const [table, setTable] = useState('Takeaway');
   const [paymentMethod, setPaymentMethod] = useState('ABA KHQR');
 
-  const categories = ['All', 'Food', 'Drinks', 'soft drink & Dessert'];
+  const categories = ['All', 'Food', 'Appetizers', 'One Plate', 'Stir Fried', 'Deep Fried', 'Soups', 'Curry', 'Salad & Steamed', 'Drinks', 'soft drink & Dessert', 'Desserts'];
   const filteredItems = selectedCategory === 'All' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === selectedCategory);
 
   // Translation Helper
@@ -117,7 +107,7 @@ export default function App() {
         return { ...item, qty: item.qty + delta };
       }
       return item;
-    }).filter(item => item.qty > 0));
+    }).filter(item => item.qty > 0)); // Automatically removes item if qty reaches 0
   };
 
   const checkout = () => {
@@ -126,7 +116,7 @@ export default function App() {
     
     const successMsg = language === 'EN' 
       ? `Order sent to POS system!\n\nTable: ${table}\nPayment: ${paymentMethod}\nGrand Total: $${total}\n\nThank you for your order!`
-      : `áž€áž¶ážšáž€áž˜áŸ’áž˜áŸ‰áž„áŸ‹ážáŸ’ážšáž¼ážœáž”áž¶áž“áž”áž‰áŸ’áž‡áž¼áž“áž‘áŸ…áž€áž“áŸ’áž›áŸ‚áž„áž‚áž·ážáž”áŸ’ážšáž¶áž€áŸ‹!\n\nážáž»: ${t(table)}\náž€áž¶ážšáž‘áž¼áž‘áž¶ážáŸ‹: ${t(paymentMethod)}\nážŸážšáž»áž”ážšáž½áž˜: $${total}\n\nážŸáž¼áž˜áž¢ážšáž‚áž»ážŽ!`;
+      : `ការកម្ម៉ង់ត្រូវបានបញ្ជូនទៅកន្លែងគិតប្រាក់!\n\nតុ: ${t(table)}\nការទូទាត់: ${t(paymentMethod)}\nសរុបរួម: $${total}\n\nសូមអរគុណ!`;
       
     alert(successMsg);
     setCart([]);
@@ -218,7 +208,7 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex items-center p-6 md:p-12">
                 <div>
                   <h2 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-3 leading-tight">
-                    {language === 'EN' ? <React.Fragment>Khmer<br/>Specials</React.Fragment> : <React.Fragment>áž˜áž»ážáž˜áŸ’áž áž¼áž”<br/>áž–áž·ážŸáŸážŸ</React.Fragment>}
+                    {language === 'EN' ? <React.Fragment>Khmer<br/>Specials</React.Fragment> : <React.Fragment>មុខម្ហូប<br/>ពិសេស</React.Fragment>}
                   </h2>
                   <button className="bg-purple-600 text-white text-xs md:text-sm px-4 md:px-6 py-2 md:py-3 rounded-full mt-2 font-bold shadow-md hover:bg-purple-700 transition-colors">
                     {t('Order Now')}
@@ -407,12 +397,12 @@ export default function App() {
                           onChange={(e) => setTable(e.target.value)}
                           className={`w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl appearance-none border font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/50 ${darkMode ? 'bg-[#1c1c1c] border-gray-800 text-white' : 'bg-white border-gray-200 text-gray-900'}`}
                         >
-                          <option value="Takeaway">ðŸ›ï¸ {t('Takeaway')}</option>
-                          <option value="Table 1">ðŸ½ï¸ {t('Table 1')}</option>
-                          <option value="Table 2">ðŸ½ï¸ {t('Table 2')}</option>
-                          <option value="Table 3">ðŸ½ï¸ {t('Table 3')}</option>
-                          <option value="Table 4">ðŸ½ï¸ {t('Table 4')}</option>
-                          <option value="Table 5">ðŸ½ï¸ {t('Table 5')}</option>
+                          <option value="Takeaway">🛍️ {t('Takeaway')}</option>
+                          <option value="Table 1">🍽️ {t('Table 1')}</option>
+                          <option value="Table 2">🍽️ {t('Table 2')}</option>
+                          <option value="Table 3">🍽️ {t('Table 3')}</option>
+                          <option value="Table 4">🍽️ {t('Table 4')}</option>
+                          <option value="Table 5">🍽️ {t('Table 5')}</option>
                         </select>
                         <ChevronDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-500'} pointer-events-none`} />
                       </div>
